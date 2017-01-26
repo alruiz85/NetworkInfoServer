@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">NetworkInfoServer</string>
+
+    <!--General-->
+    <string name="main.title">Android Server</string>
+    <string name="main.start.server">Start server</string>
+    <string name="main.start.server.started">Server has been </string>
+    <string name="main.log">Server log:</string>
+
+</resources>
