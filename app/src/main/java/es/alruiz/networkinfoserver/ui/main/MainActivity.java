@@ -35,8 +35,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     EditText etClientIp;
 
     private MainPresenter presenter;
-    private TCPServer tcpServer;
-    public String clientIp;
+    private TCPServer mServer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +44,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
         ButterKnife.bind(this);
 
         presenter = new MainPresenterImpl(this, this);
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
 
-        new BackgroundTask().execute("");
+
     }
 
     @OnClick(R.id.btn_main_start)
     public void onClickStart() {
         checkPermissions();
-        if (tcpServer != null) {
-            tcpServer.sendMessage("");
-        }
+
     }
 
     @Override
@@ -76,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     PERMISSIONS_REQUEST_COARSE_LOCATION);
         } else {
-
+            startServer();
         }
     }
 
@@ -89,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted
                     appendMessageLog(getResources().getString(R.string.permissions_granted));
+                    startServer();
                 } else {
                     // permission denied
                     appendMessageLog(getResources().getString(R.string.permissions_not_granted));
@@ -97,27 +93,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
         }
     }
 
-    public class BackgroundTask extends AsyncTask<String, String, TCPServer> {
-
-        @Override
-        protected TCPServer doInBackground(String... message) {
-
-            tcpServer = new TCPServer("192.168.1.19", new TCPServer.OnMessageReceived() {
-                @Override
-                public void messageReceived(String message) {
-                    publishProgress(message);
-                }
-            });
-            tcpServer.run();
-
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-            appendMessageLog(values[0]);
-        }
+    private void startServer(){
+        mServer = new TCPServer(new TCPServer.OnMessageReceived() {
+            @Override
+            public void messageReceived(String message) {
+                appendMessageLog("\n "+message);
+            }
+        });
+        mServer.start();
     }
 
 }
