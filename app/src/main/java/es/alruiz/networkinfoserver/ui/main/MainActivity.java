@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     private void appendMessageLog(String message) {
-        tvLog.append(message + "\n");
+        tvLog.append( "\n" + message);
         svLog.fullScroll(View.FOCUS_DOWN);
     }
 

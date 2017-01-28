@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/main.title"
+        android:text="@string/main_title"
         android:textSize="24sp" />
 
     <Button
@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="@string/main.start.server" />
+        android:text="@string/main_start_server" />
 
     <ScrollView
         android:id="@+id/sv_main_log"
@@ -36,7 +36,7 @@
             android:id="@+id/tv_main_log"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/main.log" />
+            android:text="@string/main_log" />
 
     </ScrollView>
 

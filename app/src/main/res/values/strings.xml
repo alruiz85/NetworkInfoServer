@@ -4,11 +4,12 @@
     <!--General-->
     <string name="main_title">Android Server</string>
     <string name="main_start_server">Start server</string>
-    <string name="main_start_server_started">Server has been </string>
+    <string name="main_start_server_started">Server has been started.</string>
     <string name="main_log">Server log:</string>
+    <string name="phone_data_retrieved_ok">Phone information retrieved correctly.</string>
 
     <!--Permissions-->
-    <string name="permissions_not_granted">Permission was denied</string>
-    <string name="permissions_granted">Permission was granted</string>
+    <string name="permissions_not_granted">Permission was denied.</string>
+    <string name="permissions_granted">Permission was granted.</string>
 
 </resources>

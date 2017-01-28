@@ -3,6 +3,7 @@ package es.alruiz.networkinfoserver.ui.main;
 import android.content.Context;
 import android.util.Log;
 
+import es.alruiz.networkinfoserver.R;
 import es.alruiz.networkinfoserver.domain.interactor.listener.OnItemRetrievedListener;
 import es.alruiz.networkinfoserver.domain.interactor.radio.RadioInfoInteractor;
 import es.alruiz.networkinfoserver.domain.interactor.radio.RadioInfoInteractorImpl;
@@ -17,9 +18,11 @@ public class MainPresenterImpl implements MainPresenter {
     private RadioInfoInteractor interactor;
     private MainView view;
     private TelephonyData telephonyData;
+    private Context context;
 
     MainPresenterImpl(MainView view, Context context) {
         this.view = view;
+        this.context = context;
         interactor = new RadioInfoInteractorImpl(context);
     }
 
@@ -29,6 +32,9 @@ public class MainPresenterImpl implements MainPresenter {
             @Override
             public void onSuccess(Object item) {
                 telephonyData = (TelephonyData)item;
+                if(telephonyData != null){
+                    view.showMessage(context.getResources().getString(R.string.phone_data_retrieved_ok));
+                }
             }
 
             @Override
