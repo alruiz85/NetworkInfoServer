@@ -1,5 +1,7 @@
 package es.alruiz.networkinfoserver.utils;
 
+import android.telephony.TelephonyManager;
+
 /**
  * Created by AlfonsoRuiz on 26/01/2017.
  */
@@ -8,25 +10,30 @@ public class TextUtils {
 
     public static class Radio {
 
-        static final String PHONE_TYPE_NONE = "PHONE_TYPE_NONE";
-        static final String PHONE_TYPE_GSM = "PHONE_TYPE_GSM";
-        static final String PHONE_TYPE_CDMA = "PHONE_TYPE_CDMA";
-        static final String PHONE_TYPE_SIP = "PHONE_TYPE_SIP";
-
-        public static String getPhoneType(int networkType) {
+        public static String getNetworkType(int networkType) {
             switch (networkType) {
-                case 0:
-                    return PHONE_TYPE_NONE;
-                case 1:
-                    return PHONE_TYPE_GSM;
-                case 2:
-                    return PHONE_TYPE_CDMA;
-                case 14:
-                    return PHONE_TYPE_SIP;
+                case TelephonyManager.NETWORK_TYPE_GPRS:
+                case TelephonyManager.NETWORK_TYPE_EDGE:
+                case TelephonyManager.NETWORK_TYPE_CDMA:
+                case TelephonyManager.NETWORK_TYPE_1xRTT:
+                case TelephonyManager.NETWORK_TYPE_IDEN:
+                    return "2G";
+                case TelephonyManager.NETWORK_TYPE_UMTS:
+                case TelephonyManager.NETWORK_TYPE_EVDO_0:
+                case TelephonyManager.NETWORK_TYPE_EVDO_A:
+                case TelephonyManager.NETWORK_TYPE_HSDPA:
+                case TelephonyManager.NETWORK_TYPE_HSUPA:
+                case TelephonyManager.NETWORK_TYPE_HSPA:
+                case TelephonyManager.NETWORK_TYPE_EVDO_B:
+                case TelephonyManager.NETWORK_TYPE_EHRPD:
+                case TelephonyManager.NETWORK_TYPE_HSPAP:
+                    return "3G";
+                case TelephonyManager.NETWORK_TYPE_LTE:
+                    return "4G";
+                default:
+                    return "Unknown";
             }
-            return null;
         }
-
     }
 
 }
