@@ -6,17 +6,16 @@ import android.telephony.CellInfoCdma;
 import android.telephony.CellInfoGsm;
 import android.telephony.CellInfoLte;
 import android.telephony.CellInfoWcdma;
-import android.telephony.CellLocation;
 import android.telephony.CellSignalStrengthCdma;
 import android.telephony.CellSignalStrengthGsm;
 import android.telephony.CellSignalStrengthLte;
 import android.telephony.CellSignalStrengthWcdma;
 import android.telephony.TelephonyManager;
-import android.telephony.gsm.GsmCellLocation;
 
 import java.util.List;
 
 import es.alruiz.networkinfoserver.domain.interactor.listener.OnItemRetrievedListener;
+import es.alruiz.networkinfoserver.model.TelephonyData;
 import es.alruiz.networkinfoserver.utils.TextUtils;
 
 /**
@@ -26,6 +25,7 @@ import es.alruiz.networkinfoserver.utils.TextUtils;
 public class RadioInfoInteractorImpl implements RadioInfoInteractor {
 
     private Context context;
+    private TelephonyData telephonyData;
 
     public RadioInfoInteractorImpl(Context context) {
         this.context = context;
@@ -35,21 +35,25 @@ public class RadioInfoInteractorImpl implements RadioInfoInteractor {
     public void execute(OnItemRetrievedListener listener) {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
-        String operatorName = telephonyManager.getNetworkOperatorName();
-        GsmCellLocation cellLocation = (GsmCellLocation) telephonyManager.getCellLocation();
+        if (telephonyManager != null) {
+            telephonyData = new TelephonyData();
+            telephonyData.setOperatorName(telephonyManager.getNetworkOperatorName());
+            telephonyData.setCellLocation(telephonyManager.getCellLocation());
+            telephonyData.setSignalStregth(getSignalStrength(telephonyManager));
+            telephonyData.setNetWorkCountryISO(telephonyManager.getNetworkCountryIso());
+            telephonyData.setNetworkOperator(telephonyManager.getNetworkOperator());
+            int networkType = telephonyManager.getNetworkType();
+            telephonyData.setNetworkType(TextUtils.Radio.getNetworkType(networkType));
+            telephonyData.setSimOperator(telephonyManager.getSimOperator());
+            telephonyData.setSimOperatorName(telephonyManager.getSimOperatorName());
+        }
 
-        CellLocation location = telephonyManager.getCellLocation();
+        if (telephonyData != null){
+            listener.onSuccess(telephonyData);
+        }else {
+            listener.onError("Error");
+        }
 
-        String signalStregth = getSignalStrength(telephonyManager);
-
-        String netWorkCountryISO = telephonyManager.getNetworkCountryIso();
-        String networkOperator = telephonyManager.getNetworkOperator();
-        int networkType = telephonyManager.getNetworkType();
-        TextUtils.Radio.getNetworkType(networkType);
-
-        String simOperator = telephonyManager.getSimOperator();
-        String simOperatorName = telephonyManager.getSimOperatorName();
-//        listener.onError("Error");
     }
 
     private String getSignalStrength(TelephonyManager telephonyManager) {
