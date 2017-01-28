@@ -1,16 +1,17 @@
 package es.alruiz.networkinfoserver.ui.main;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.alruiz.networkinfoserver.R;
+import es.alruiz.networkinfoserver.network.TCPServer;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
@@ -29,8 +31,12 @@ public class MainActivity extends AppCompatActivity implements MainView {
     TextView tvLog;
     @BindView(R.id.sv_main_log)
     ScrollView svLog;
+    @BindView(R.id.et_client_ip)
+    EditText etClientIp;
 
     private MainPresenter presenter;
+    private TCPServer tcpServer;
+    public String clientIp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +45,18 @@ public class MainActivity extends AppCompatActivity implements MainView {
         ButterKnife.bind(this);
 
         presenter = new MainPresenterImpl(this, this);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        new BackgroundTask().execute("");
     }
 
     @OnClick(R.id.btn_main_start)
     public void onClickStart() {
         checkPermissions();
+        if (tcpServer != null) {
+            tcpServer.sendMessage("");
+        }
     }
 
     @Override
@@ -52,36 +65,58 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     private void appendMessageLog(String message) {
-        tvLog.append( "\n" + message);
+        tvLog.append("\n" + message);
         svLog.fullScroll(View.FOCUS_DOWN);
     }
 
-    private void checkPermissions(){
+    private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        PERMISSIONS_REQUEST_COARSE_LOCATION);
-        }else {
-            presenter.getPhoneInfo();
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    PERMISSIONS_REQUEST_COARSE_LOCATION);
+        } else {
+
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_REQUEST_COARSE_LOCATION: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted
                     appendMessageLog(getResources().getString(R.string.permissions_granted));
-                    presenter.getPhoneInfo();
                 } else {
                     // permission denied
                     appendMessageLog(getResources().getString(R.string.permissions_not_granted));
                 }
             }
+        }
+    }
+
+    public class BackgroundTask extends AsyncTask<String, String, TCPServer> {
+
+        @Override
+        protected TCPServer doInBackground(String... message) {
+
+            tcpServer = new TCPServer("192.168.1.19", new TCPServer.OnMessageReceived() {
+                @Override
+                public void messageReceived(String message) {
+                    publishProgress(message);
+                }
+            });
+            tcpServer.run();
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            appendMessageLog(values[0]);
         }
     }
 

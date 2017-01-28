@@ -1,7 +1,6 @@
 package es.alruiz.networkinfoserver.ui.main;
 
 import android.content.Context;
-import android.util.Log;
 
 import es.alruiz.networkinfoserver.R;
 import es.alruiz.networkinfoserver.domain.interactor.listener.OnItemRetrievedListener;
@@ -31,8 +30,8 @@ public class MainPresenterImpl implements MainPresenter {
         interactor.execute(new OnItemRetrievedListener() {
             @Override
             public void onSuccess(Object item) {
-                telephonyData = (TelephonyData)item;
-                if(telephonyData != null){
+                telephonyData = (TelephonyData) item;
+                if (telephonyData != null) {
                     view.showMessage(context.getResources().getString(R.string.phone_data_retrieved_ok));
                 }
             }
