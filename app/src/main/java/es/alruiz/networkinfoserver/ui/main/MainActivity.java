@@ -1,7 +1,11 @@
 package es.alruiz.networkinfoserver.ui.main;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
@@ -17,6 +21,8 @@ import es.alruiz.networkinfoserver.R;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
+    private static final int PERMISSIONS_REQUEST_COARSE_LOCATION = 1;
+
     @BindView(R.id.btn_main_start)
     Button btnStart;
     @BindView(R.id.tv_main_log)
@@ -25,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
     ScrollView svLog;
 
     private MainPresenter presenter;
-    int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @OnClick(R.id.btn_main_start)
     public void onClickStart() {
-        presenter.getPhoneInfo();
+        checkPermissions();
     }
 
     @Override
@@ -50,4 +55,34 @@ public class MainActivity extends AppCompatActivity implements MainView {
         tvLog.append(message + "\n");
         svLog.fullScroll(View.FOCUS_DOWN);
     }
+
+    private void checkPermissions(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        PERMISSIONS_REQUEST_COARSE_LOCATION);
+        }else {
+            presenter.getPhoneInfo();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_COARSE_LOCATION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
+                    appendMessageLog(getResources().getString(R.string.permissions_granted));
+                    presenter.getPhoneInfo();
+                } else {
+                    // permission denied
+                    appendMessageLog(getResources().getString(R.string.permissions_not_granted));
+                }
+            }
+        }
+    }
+
 }
