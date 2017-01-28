@@ -45,7 +45,7 @@ public class RadioInfoInteractorImpl implements RadioInfoInteractor {
         String netWorkCountryISO = telephonyManager.getNetworkCountryIso();
         String networkOperator = telephonyManager.getNetworkOperator();
         int networkType = telephonyManager.getNetworkType();
-        TextUtils.Radio.getPhoneType(networkType);
+        TextUtils.Radio.getNetworkType(networkType);
 
         String simOperator = telephonyManager.getSimOperator();
         String simOperatorName = telephonyManager.getSimOperatorName();
