@@ -8,4 +8,6 @@ public interface MainPresenter {
 
     void getPhoneInfo();
 
+    void getIPs();
+
 }

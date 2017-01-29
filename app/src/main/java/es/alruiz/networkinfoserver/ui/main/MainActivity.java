@@ -2,7 +2,6 @@ package es.alruiz.networkinfoserver.ui.main;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -18,7 +17,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.alruiz.networkinfoserver.R;
 import es.alruiz.networkinfoserver.network.Server;
-import es.alruiz.networkinfoserver.utils.ip.IPUtilities;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
@@ -94,28 +92,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     private void startServer() {
+        presenter.getIPs();
         server = new Server(this);
-        showMessage("Internal IP: " + IPUtilities.getInternalIp());
-        new IpPublicTask().execute();
-    }
-
-    private class IpPublicTask extends AsyncTask<Void, Void, String> {
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                return IPUtilities.getPublicIp();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result != null) {
-                appendMessageLog("Public IP: " + result);
-            }
-        }
     }
 
 }
