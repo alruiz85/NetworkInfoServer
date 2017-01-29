@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.alruiz.networkinfoserver.R;
 import es.alruiz.networkinfoserver.network.Server;
-import es.alruiz.networkinfoserver.utils.ip.IPUtils;
+import es.alruiz.networkinfoserver.utils.ip.IPUtilities;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     private void startServer() {
         server = new Server(this);
-        showMessage("Internal IP: " + IPUtils.getInternalIp());
+        showMessage("Internal IP: " + IPUtilities.getInternalIp());
         new IpPublicTask().execute();
     }
 
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         @Override
         protected String doInBackground(Void... params) {
             try {
-                return IPUtils.getPublicIp();
+                return IPUtilities.getPublicIp();
             } catch (Exception e) {
                 e.printStackTrace();
             }

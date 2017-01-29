@@ -13,7 +13,7 @@ import java.util.Enumeration;
  * Created by Alfonso on 29/01/2017.
  */
 
-public class IPUtils {
+public class IPUtilities {
 
     public static String getInternalIp() {
         String ip = "";
