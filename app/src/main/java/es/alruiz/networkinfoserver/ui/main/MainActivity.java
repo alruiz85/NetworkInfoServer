@@ -4,14 +4,12 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -19,7 +17,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.alruiz.networkinfoserver.R;
-import es.alruiz.networkinfoserver.network.TCPServer;
+import es.alruiz.networkinfoserver.network.Server;
+import es.alruiz.networkinfoserver.utils.ip.IPUtils;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
@@ -31,11 +30,9 @@ public class MainActivity extends AppCompatActivity implements MainView {
     TextView tvLog;
     @BindView(R.id.sv_main_log)
     ScrollView svLog;
-    @BindView(R.id.et_client_ip)
-    EditText etClientIp;
 
     private MainPresenter presenter;
-    private TCPServer mServer;
+    private Server server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +41,17 @@ public class MainActivity extends AppCompatActivity implements MainView {
         ButterKnife.bind(this);
 
         presenter = new MainPresenterImpl(this, this);
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        server.stopServer();
     }
 
     @OnClick(R.id.btn_main_start)
     public void onClickStart() {
         checkPermissions();
-
     }
 
     @Override
@@ -93,14 +93,29 @@ public class MainActivity extends AppCompatActivity implements MainView {
         }
     }
 
-    private void startServer(){
-        mServer = new TCPServer(new TCPServer.OnMessageReceived() {
-            @Override
-            public void messageReceived(String message) {
-                appendMessageLog("\n "+message);
+    private void startServer() {
+        server = new Server(this);
+        showMessage("Internal IP: " + IPUtils.getInternalIp());
+        new IpPublicTask().execute();
+    }
+
+    private class IpPublicTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                return IPUtils.getPublicIp();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
-        mServer.start();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                appendMessageLog("Public IP: " + result);
+            }
+        }
     }
 
 }
