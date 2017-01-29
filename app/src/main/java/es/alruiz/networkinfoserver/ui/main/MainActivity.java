@@ -16,7 +16,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.alruiz.networkinfoserver.R;
-import es.alruiz.networkinfoserver.network.Server;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     ScrollView svLog;
 
     private MainPresenter presenter;
-    private Server server;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +37,13 @@ public class MainActivity extends AppCompatActivity implements MainView {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        presenter = new MainPresenterImpl(this, this);
+        presenter = new MainPresenterImpl(this, this, this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        server.stopServer();
+        presenter.stopServer();
     }
 
     @OnClick(R.id.btn_main_start)
@@ -69,7 +68,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     PERMISSIONS_REQUEST_COARSE_LOCATION);
         } else {
-            startServer();
+            presenter.getIPs();
+            presenter.startServer();
         }
     }
 
@@ -82,18 +82,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted
                     appendMessageLog(getResources().getString(R.string.permissions_granted));
-                    startServer();
+                    presenter.getIPs();
+                    presenter.startServer();
                 } else {
                     // permission denied
                     appendMessageLog(getResources().getString(R.string.permissions_not_granted));
                 }
             }
         }
-    }
-
-    private void startServer() {
-        presenter.getIPs();
-        server = new Server(this);
     }
 
 }

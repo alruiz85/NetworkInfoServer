@@ -10,4 +10,8 @@ public interface MainPresenter {
 
     void getIPs();
 
+    void startServer();
+
+    void stopServer();
+
 }

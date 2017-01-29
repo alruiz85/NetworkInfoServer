@@ -55,7 +55,7 @@ public class Server {
                     });
 
                     ServerSocketReplyThread serverSocketReplyThread = new ServerSocketReplyThread(socket, client);
-                    serverSocketReplyThread.run();//TODO mover al main
+                    serverSocketReplyThread.run();
 
                 }
             } catch (IOException e) {
