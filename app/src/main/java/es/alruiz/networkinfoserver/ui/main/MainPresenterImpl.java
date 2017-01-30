@@ -1,6 +1,5 @@
 package es.alruiz.networkinfoserver.ui.main;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
@@ -22,15 +21,14 @@ class MainPresenterImpl implements MainPresenter {
     private RadioInfoInteractor interactor;
     private MainView view;
     private TelephonyData telephonyData;
-    private Context context;
+    private String telephonyDataJson;
     private MainActivity activity;
     private Server server;
 
-    MainPresenterImpl(MainView view, Context context, MainActivity activity) {
+    MainPresenterImpl(MainView view, MainActivity activity) {
         this.view = view;
-        this.context = context;
         this.activity = activity;
-        interactor = new RadioInfoInteractorImpl(context);
+        interactor = new RadioInfoInteractorImpl(activity);
     }
 
     @Override
@@ -40,9 +38,11 @@ class MainPresenterImpl implements MainPresenter {
             public void onSuccess(Object item) {
                 telephonyData = (TelephonyData) item;
                 if (telephonyData != null) {
-                    view.showMessage(context.getResources().getString(R.string.phone_data_retrieved_ok));
+                    view.showMessage(activity.getApplicationContext().getResources().getString(R.string.phone_data_retrieved_ok));
                     Gson gson = new Gson();
-                    String json = gson.toJson(telephonyData);
+                    telephonyDataJson = gson.toJson(telephonyData);
+                    startServer();
+
                 }
             }
 
@@ -61,13 +61,13 @@ class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void startServer() {
-        server = new Server(activity);
+        server = new Server(activity, telephonyDataJson);
         view.showMessage("Server running...");
     }
 
     @Override
     public void stopServer() {
-
+        server.stopServer();
     }
 
     private class IpPublicTask extends AsyncTask<Void, Void, String> {

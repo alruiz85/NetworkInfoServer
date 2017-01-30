@@ -16,12 +16,13 @@ import es.alruiz.networkinfoserver.ui.main.MainActivity;
 public class Server {
     private MainActivity activity;
     private ServerSocket serverSocket;
-    private String message = "";
+    private String messageJson = "";
     private String line = "";
     private static final int serverSocketPort = 8080;
 
-    public Server(MainActivity activity) {
+    public Server(MainActivity activity, String messageJson) {
         this.activity = activity;
+        this.messageJson = messageJson;
         Thread socketServerThread = new Thread(new ServerSocketThread());
         socketServerThread.start();
     }
@@ -65,8 +66,6 @@ public class Server {
 
         @Override
         public void run() {
-            final String msgReply = "JSON";
-
             try {
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -78,21 +77,19 @@ public class Server {
                     }
                 });
 
-                out.println(msgReply);
+                out.println(messageJson);
                 out.close();
                 in.close();
 
-                message += "Replayed JSON: " + msgReply + "\n";
-
             } catch (IOException e) {
                 e.printStackTrace();
-                message += "Server problem...  " + e.toString() + "\n";
+                messageJson += "Server problem...  " + e.toString() + "\n";
             }
 
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    activity.showMessage(message);
+                    activity.showMessage(messageJson);
                 }
             });
         }

@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        presenter = new MainPresenterImpl(this, this, this);
+        presenter = new MainPresenterImpl(this, this);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     PERMISSIONS_REQUEST_COARSE_LOCATION);
         } else {
             presenter.getIPs();
-            presenter.startServer();
+            presenter.getPhoneInfo();
         }
     }
 
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     // permission was granted
                     appendMessageLog(getResources().getString(R.string.permissions_granted));
                     presenter.getIPs();
-                    presenter.startServer();
+                    presenter.getPhoneInfo();
                 } else {
                     // permission denied
                     appendMessageLog(getResources().getString(R.string.permissions_not_granted));
