@@ -4,9 +4,10 @@ package es.alruiz.networkinfoserver.network;
  * Created by Alfonso on 29/01/2017.
  */
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -35,17 +36,19 @@ public class Server {
     }
 
     private class ServerSocketThread extends Thread {
-        int client = 0;
+        String operation = "";
 
         @Override
         public void run() {
             try {
                 serverSocket = new ServerSocket(serverSocketPort);
+                Socket socket = serverSocket.accept();
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 while (true) {
-                    Socket socket = serverSocket.accept();
-                    client++;
-                    message += "Client: " + client + " from "
-                            + socket.getInetAddress() +"\n";
+                    out.println("respuesta desde el movil");
+                    operation = in.readLine();
+                    message += operation + " from " + socket.getInetAddress() + "\n";
 
                     activity.runOnUiThread(new Runnable() {
                         @Override
@@ -54,8 +57,8 @@ public class Server {
                         }
                     });
 
-                    ServerSocketReplyThread serverSocketReplyThread = new ServerSocketReplyThread(socket, client);
-                    serverSocketReplyThread.run();
+//                    ServerSocketReplyThread serverSocketReplyThread = new ServerSocketReplyThread(socket);
+//                    serverSocketReplyThread.run();
 
                 }
             } catch (IOException e) {
@@ -64,50 +67,42 @@ public class Server {
         }
     }
 
-    private class ServerSocketReplyThread extends Thread {
-
-        private Socket hostThreadSocket;
-        private int client;
-
-        ServerSocketReplyThread(Socket socket, int client) {
-            hostThreadSocket = socket;
-            this.client = client;
-        }
-
-        @Override
-        public void run() {
-            OutputStream outputStream;
-            final String msgReply = "Hello from AndroidServer, you are " + client;
-
-            try {
-                outputStream = hostThreadSocket.getOutputStream();
-                PrintStream printStream = new PrintStream(outputStream);
-                printStream.print(msgReply);
-                printStream.close();
-
-                message += "Replayed: " + msgReply + "\n";
-
-                activity.runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        activity.showMessage(message);
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                message += "Something wrong! " + e.toString() + "\n";
-            }
-
-            activity.runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    activity.showMessage(message);
-                }
-            });
-        }
-
-    }
+//    private class ServerSocketReplyThread extends Thread {
+//
+//        private Socket hostThreadSocket;
+//
+//        ServerSocketReplyThread(Socket socket) {
+//            hostThreadSocket = socket;
+//        }
+//
+//        @Override
+//        public void run() {
+////            OutputStream outputStream;
+//            final String msgReply = "Hello from AndroidServer";
+//
+//            try {
+////                outputStream = hostThreadSocket.getOutputStream();
+////                PrintStream printStream = new PrintStream(outputStream);
+////                printStream.print(msgReply);
+////                printStream.close();
+//                PrintWriter out = new PrintWriter(hostThreadSocket.getOutputStream(), true);
+//                out.println(msgReply);
+//
+//                message += "Replayed: " + msgReply + "\n";
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                message += "Something wrong! " + e.toString() + "\n";
+//            }
+//
+//            activity.runOnUiThread(new Runnable() {
+//
+//                @Override
+//                public void run() {
+//                    activity.showMessage(message);
+//                }
+//            });
+//        }
+//
+//    }
 }
