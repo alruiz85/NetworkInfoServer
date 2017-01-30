@@ -17,6 +17,7 @@ public class Server {
     private MainActivity activity;
     private ServerSocket serverSocket;
     private String message = "";
+    private String line = "";
     private static final int serverSocketPort = 8080;
 
     public Server(MainActivity activity) {
@@ -36,29 +37,16 @@ public class Server {
     }
 
     private class ServerSocketThread extends Thread {
-        String operation = "";
 
         @Override
         public void run() {
             try {
                 serverSocket = new ServerSocket(serverSocketPort);
-                Socket socket = serverSocket.accept();
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 while (true) {
-                    out.println("respuesta desde el movil");
-                    operation = in.readLine();
-                    message += operation + " from " + socket.getInetAddress() + "\n";
+                    Socket socket = serverSocket.accept();
 
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            activity.showMessage(message);
-                        }
-                    });
-
-//                    ServerSocketReplyThread serverSocketReplyThread = new ServerSocketReplyThread(socket);
-//                    serverSocketReplyThread.run();
+                    ServerSocketReplyThread serverSocketReplyThread = new ServerSocketReplyThread(socket);
+                    serverSocketReplyThread.run();
 
                 }
             } catch (IOException e) {
@@ -67,42 +55,47 @@ public class Server {
         }
     }
 
-//    private class ServerSocketReplyThread extends Thread {
-//
-//        private Socket hostThreadSocket;
-//
-//        ServerSocketReplyThread(Socket socket) {
-//            hostThreadSocket = socket;
-//        }
-//
-//        @Override
-//        public void run() {
-////            OutputStream outputStream;
-//            final String msgReply = "Hello from AndroidServer";
-//
-//            try {
-////                outputStream = hostThreadSocket.getOutputStream();
-////                PrintStream printStream = new PrintStream(outputStream);
-////                printStream.print(msgReply);
-////                printStream.close();
-//                PrintWriter out = new PrintWriter(hostThreadSocket.getOutputStream(), true);
-//                out.println(msgReply);
-//
-//                message += "Replayed: " + msgReply + "\n";
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                message += "Something wrong! " + e.toString() + "\n";
-//            }
-//
-//            activity.runOnUiThread(new Runnable() {
-//
-//                @Override
-//                public void run() {
-//                    activity.showMessage(message);
-//                }
-//            });
-//        }
-//
-//    }
+    private class ServerSocketReplyThread extends Thread {
+
+        private Socket socket;
+
+        ServerSocketReplyThread(Socket socket) {
+            this.socket = socket;
+        }
+
+        @Override
+        public void run() {
+            final String msgReply = "JSON";
+
+            try {
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                line = in.readLine();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.showMessage(line);
+                    }
+                });
+
+                out.println(msgReply);
+                out.close();
+                in.close();
+
+                message += "Replayed JSON: " + msgReply + "\n";
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                message += "Server problem...  " + e.toString() + "\n";
+            }
+
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    activity.showMessage(message);
+                }
+            });
+        }
+
+    }
 }

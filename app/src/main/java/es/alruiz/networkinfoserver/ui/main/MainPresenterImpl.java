@@ -5,8 +5,6 @@ import android.os.AsyncTask;
 
 import com.google.gson.Gson;
 
-import org.json.JSONObject;
-
 import es.alruiz.networkinfoserver.R;
 import es.alruiz.networkinfoserver.domain.interactor.listener.OnItemRetrievedListener;
 import es.alruiz.networkinfoserver.domain.interactor.radio.RadioInfoInteractor;
@@ -14,7 +12,6 @@ import es.alruiz.networkinfoserver.domain.interactor.radio.RadioInfoInteractorIm
 import es.alruiz.networkinfoserver.model.TelephonyData;
 import es.alruiz.networkinfoserver.network.Server;
 import es.alruiz.networkinfoserver.utils.ip.IPUtilities;
-import timber.log.Timber;
 
 /**
  * Created by AlfonsoRuiz on 26/01/2017.
@@ -65,11 +62,12 @@ class MainPresenterImpl implements MainPresenter {
     @Override
     public void startServer() {
         server = new Server(activity);
+        view.showMessage("Server running...");
     }
 
     @Override
     public void stopServer() {
-        server.stopServer();
+
     }
 
     private class IpPublicTask extends AsyncTask<Void, Void, String> {
