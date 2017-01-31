@@ -8,6 +8,8 @@ public interface MainPresenter {
 
     void getPhoneInfo();
 
+    void getPhoneInfoEmergencyMode();
+
     void getState();
 
     void getIPs();

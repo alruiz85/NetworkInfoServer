@@ -1,5 +1,6 @@
 package es.alruiz.networkinfoserver.utils.text;
 
+import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
 
 /**
@@ -31,9 +32,25 @@ public class TextUtils {
                 case TelephonyManager.NETWORK_TYPE_LTE:
                     return "4G";
                 default:
-                    return "Unknown";
+                    return "UNKNOWN";
             }
         }
+
+        public static String getServiceState(int state) {
+            switch (state) {
+                case ServiceState.STATE_IN_SERVICE:
+                    return "STATE_IN_SERVICE";
+                case ServiceState.STATE_EMERGENCY_ONLY:
+                    return "STATE_EMERGENCY_ONLY";
+                case ServiceState.STATE_OUT_OF_SERVICE:
+                    return "STATE_OUT_OF_SERVICE";
+                case ServiceState.STATE_POWER_OFF:
+                    return "STATE_POWER_OFF";
+                default:
+                    return "UNKNOWN";
+            }
+        }
+
     }
 
 }

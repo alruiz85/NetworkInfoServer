@@ -1,5 +1,6 @@
 package es.alruiz.networkinfoserver.domain.interactor.state;
 
+import es.alruiz.networkinfoserver.domain.interactor.listener.OnItemRetrievedListener;
 import es.alruiz.networkinfoserver.domain.interactor.state.listener.StateListener;
 
 /**
@@ -8,6 +9,6 @@ import es.alruiz.networkinfoserver.domain.interactor.state.listener.StateListene
 
 public interface GetStateInteractor {
 
-    void execute(StateListener listener);
+    void execute(StateListener stateListener, OnItemRetrievedListener onItemRetrievedListener);
 
 }

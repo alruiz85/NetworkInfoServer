@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     PERMISSIONS_REQUEST_COARSE_LOCATION);
         } else {
             presenter.getIPs();
-            presenter.getPhoneInfo();
             presenter.getState();
         }
     }
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     // permission was granted
                     appendMessageLog(getResources().getString(R.string.permissions_granted));
                     presenter.getIPs();
-                    presenter.getPhoneInfo();
+                    presenter.getState();
                 } else {
                     // permission denied
                     appendMessageLog(getResources().getString(R.string.permissions_not_granted));
