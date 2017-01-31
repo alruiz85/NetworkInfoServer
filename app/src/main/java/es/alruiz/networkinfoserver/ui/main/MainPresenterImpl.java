@@ -8,8 +8,11 @@ import es.alruiz.networkinfoserver.R;
 import es.alruiz.networkinfoserver.domain.interactor.listener.OnItemRetrievedListener;
 import es.alruiz.networkinfoserver.domain.interactor.radio.RadioInfoInteractor;
 import es.alruiz.networkinfoserver.domain.interactor.radio.RadioInfoInteractorImpl;
+import es.alruiz.networkinfoserver.domain.interactor.state.GetStateInteractor;
+import es.alruiz.networkinfoserver.domain.interactor.state.GetStateInteractorImpl;
 import es.alruiz.networkinfoserver.model.TelephonyData;
 import es.alruiz.networkinfoserver.network.Server;
+import es.alruiz.networkinfoserver.domain.interactor.state.listener.StateListener;
 import es.alruiz.networkinfoserver.utils.ip.IPUtilities;
 
 /**
@@ -18,7 +21,8 @@ import es.alruiz.networkinfoserver.utils.ip.IPUtilities;
 
 class MainPresenterImpl implements MainPresenter {
 
-    private RadioInfoInteractor interactor;
+    private RadioInfoInteractor radioInfoInteractor;
+    private GetStateInteractor getStateInteractor;
     private MainView view;
     private TelephonyData telephonyData;
     private String telephonyDataJson;
@@ -28,12 +32,13 @@ class MainPresenterImpl implements MainPresenter {
     MainPresenterImpl(MainView view, MainActivity activity) {
         this.view = view;
         this.activity = activity;
-        interactor = new RadioInfoInteractorImpl(activity);
+        radioInfoInteractor = new RadioInfoInteractorImpl(activity);
+        getStateInteractor = new GetStateInteractorImpl(activity);
     }
 
     @Override
     public void getPhoneInfo() {
-        interactor.execute(new OnItemRetrievedListener() {
+        radioInfoInteractor.execute(new OnItemRetrievedListener() {
             @Override
             public void onSuccess(Object item) {
                 telephonyData = (TelephonyData) item;
@@ -50,6 +55,13 @@ class MainPresenterImpl implements MainPresenter {
             public void onError(String error) {
                 view.showMessage(error);
             }
+        });
+    }
+
+    @Override
+    public void getState() {
+        getStateInteractor.execute(new StateListener() {
+
         });
     }
 

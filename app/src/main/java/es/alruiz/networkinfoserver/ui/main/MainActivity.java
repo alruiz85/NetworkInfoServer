@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         } else {
             presenter.getIPs();
             presenter.getPhoneInfo();
+            presenter.getState();
         }
     }
 
