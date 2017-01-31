@@ -1,4 +1,4 @@
-package es.alruiz.networkinfoserver.utils;
+package es.alruiz.networkinfoserver.utils.text;
 
 import android.telephony.TelephonyManager;
 

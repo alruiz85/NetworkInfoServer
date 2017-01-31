@@ -1,29 +1,34 @@
 package es.alruiz.networkinfoserver.ui.main;
 
-import android.content.Context;
-import android.util.Log;
+import android.os.AsyncTask;
+
+import com.google.gson.Gson;
 
 import es.alruiz.networkinfoserver.R;
 import es.alruiz.networkinfoserver.domain.interactor.listener.OnItemRetrievedListener;
 import es.alruiz.networkinfoserver.domain.interactor.radio.RadioInfoInteractor;
 import es.alruiz.networkinfoserver.domain.interactor.radio.RadioInfoInteractorImpl;
 import es.alruiz.networkinfoserver.model.TelephonyData;
+import es.alruiz.networkinfoserver.network.Server;
+import es.alruiz.networkinfoserver.utils.ip.IPUtilities;
 
 /**
  * Created by AlfonsoRuiz on 26/01/2017.
  */
 
-public class MainPresenterImpl implements MainPresenter {
+class MainPresenterImpl implements MainPresenter {
 
     private RadioInfoInteractor interactor;
     private MainView view;
     private TelephonyData telephonyData;
-    private Context context;
+    private String telephonyDataJson;
+    private MainActivity activity;
+    private Server server;
 
-    MainPresenterImpl(MainView view, Context context) {
+    MainPresenterImpl(MainView view, MainActivity activity) {
         this.view = view;
-        this.context = context;
-        interactor = new RadioInfoInteractorImpl(context);
+        this.activity = activity;
+        interactor = new RadioInfoInteractorImpl(activity);
     }
 
     @Override
@@ -31,9 +36,13 @@ public class MainPresenterImpl implements MainPresenter {
         interactor.execute(new OnItemRetrievedListener() {
             @Override
             public void onSuccess(Object item) {
-                telephonyData = (TelephonyData)item;
-                if(telephonyData != null){
-                    view.showMessage(context.getResources().getString(R.string.phone_data_retrieved_ok));
+                telephonyData = (TelephonyData) item;
+                if (telephonyData != null) {
+                    view.showMessage(activity.getApplicationContext().getResources().getString(R.string.phone_data_retrieved_ok));
+                    Gson gson = new Gson();
+                    telephonyDataJson = gson.toJson(telephonyData);
+                    startServer();
+
                 }
             }
 
@@ -43,4 +52,41 @@ public class MainPresenterImpl implements MainPresenter {
             }
         });
     }
+
+    @Override
+    public void getIPs() {
+        view.showMessage("Internal IP: " + IPUtilities.getInternalIp());
+        new IpPublicTask().execute();
+    }
+
+    @Override
+    public void startServer() {
+        server = new Server(activity, telephonyDataJson);
+        view.showMessage("Server running...");
+    }
+
+    @Override
+    public void stopServer() {
+        server.stopServer();
+    }
+
+    private class IpPublicTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                return IPUtilities.getPublicIp();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                view.showMessage("Public IP: " + result);
+            }
+        }
+    }
+
 }

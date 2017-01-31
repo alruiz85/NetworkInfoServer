@@ -16,7 +16,7 @@ import java.util.List;
 
 import es.alruiz.networkinfoserver.domain.interactor.listener.OnItemRetrievedListener;
 import es.alruiz.networkinfoserver.model.TelephonyData;
-import es.alruiz.networkinfoserver.utils.TextUtils;
+import es.alruiz.networkinfoserver.utils.text.TextUtils;
 
 /**
  * Created by AlfonsoRuiz on 26/01/2017.
