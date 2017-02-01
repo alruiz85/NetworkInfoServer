@@ -12,4 +12,10 @@
     <string name="permissions_not_granted">Permission was denied.</string>
     <string name="permissions_granted">Permission was granted.</string>
 
+    <!--Server-->
+    <string name="server_running">Server running…</string>
+    <string name="server_stoped">Server has been stopped.</string>
+    <string name="server_local_ip">IP Local: %1$s.</string>
+    <string name="server_public_ip">IP Public: %1$s.</string>
+
 </resources>

@@ -15,7 +15,7 @@ import java.util.Enumeration;
 
 public class IPUtilities {
 
-    public static String getInternalIp() {
+    public static String getLocalIp() {
         String ip = "";
         try {
             Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface.getNetworkInterfaces();
