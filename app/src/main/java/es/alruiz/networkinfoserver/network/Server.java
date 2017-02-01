@@ -48,7 +48,6 @@ public class Server {
 
                     ServerSocketReplyThread serverSocketReplyThread = new ServerSocketReplyThread(socket);
                     serverSocketReplyThread.run();
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
